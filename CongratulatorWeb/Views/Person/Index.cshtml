@@ -1,0 +1,45 @@
+﻿@model List<CongratulatorWeb.Entities.Person>
+@{
+    ViewData["Title"] = "All birthdays";
+}
+
+<h1>All birthdays</h1>
+
+<p>
+    <a asp-action="Create">Create new person</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Birthday</th>
+            <th>Relationship</th>
+            <th>Age</th>
+            <th>Photo</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.BirthDate.ToString("dd.MM.yyyy")</td>
+                <td>@item.Relationship.ToString();</td>
+                <td>@item.Age</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.PhotoPath))
+                    {
+                        <img src="@item.PhotoPath" alt="@item.Name" width="50" />
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="UploadPhoto" asp-route-id="@item.Id">Load photo</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,53 @@
+﻿@model List<CongratulatorWeb.Entities.Person>
+@{
+    ViewData["Title"] = "Todays and upcoming birthdays";
+}
+
+<h1>Todays and upcoming birthdays</h1>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Birthday</th>
+                <th>Relationship</th>
+                <th>Age</th>
+                <th>Photo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var person in Model)
+            {
+                <tr>
+                    <td>@person.Name</td>
+                    <td>@person.BirthDate.ToString("dd.MM.yyyy")</td>
+                    <td>@person.Relationship.ToString()</td>
+                    <td>@person.Age</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(person.PhotoPath))
+                        {
+                            <img src="@person.PhotoPath" alt="@person.Name" width="50" />
+                        }
+                        else
+                        {
+                            <span>Нет фото</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-controller="Person" asp-action="Edit" asp-route-id="@person.Id">Edit</a> |
+                        <a asp-controller="Person" asp-action="Delete" asp-route-id="@person.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>There is no upcoming birthdays.</p>
+}
+
+<p><a asp-controller="Person" asp-action="Index">All birthdays</a></p>
