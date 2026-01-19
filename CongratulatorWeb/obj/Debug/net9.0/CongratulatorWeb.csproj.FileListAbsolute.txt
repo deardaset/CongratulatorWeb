@@ -186,3 +186,4 @@ C:\Users\kuvel\source\repos\CongratulatorWeb\CongratulatorWeb\obj\Debug\net9.0\r
 C:\Users\kuvel\source\repos\CongratulatorWeb\CongratulatorWeb\obj\Debug\net9.0\CongratulatorWeb.pdb
 C:\Users\kuvel\source\repos\CongratulatorWeb\CongratulatorWeb\obj\Debug\net9.0\CongratulatorWeb.genruntimeconfig.cache
 C:\Users\kuvel\source\repos\CongratulatorWeb\CongratulatorWeb\obj\Debug\net9.0\ref\CongratulatorWeb.dll
+C:\Users\kuvel\source\repos\CongratulatorWeb\CongratulatorWeb\obj\Debug\net9.0\CongratulatorWeb.sourcelink.json

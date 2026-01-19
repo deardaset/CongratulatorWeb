@@ -10,17 +10,14 @@ namespace CongratulatorWeb.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Name is required")]
         [StringLength(100, ErrorMessage = "Name cannot be longer than 100 chars")]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Birthday is required")]
         [DataType(DataType.Date)]
         [Display(Name = "Birthday")]
         [Column(TypeName = "date")]
         public DateTime BirthDate { get; set; }
 
-        [Required(ErrorMessage = "Relationship is required")]
         public RelationshipType Relationship {  get; set; }
 
         [Display(Name = "Photo")]

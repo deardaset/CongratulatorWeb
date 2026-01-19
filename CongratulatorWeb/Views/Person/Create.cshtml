@@ -1,4 +1,5 @@
-﻿@model CongratulatorWeb.Entities.Person
+﻿@using CongratulatorWeb.Models.Enums
+@model CongratulatorWeb.Entities.Person
 @{
     ViewData["Title"] = "Create person";
 }
@@ -10,22 +11,24 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label asp-for="BirthDate" class="control-label"></label>
                 <input asp-for="BirthDate" class="form-control" type="date" />
                 <span asp-validation-for="BirthDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label asp-for="Relationship" class="control-label"></label>
-                <input asp-for="Relationship" class="form-control" />
+                <select asp-for="Relationship" asp-items="Html.GetEnumSelectList<RelationshipType>()" class="form-control">
+                    <option value="">Choose relationship type</option>
+                </select>
                 <span asp-validation-for="Relationship", class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -33,7 +36,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to list</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to list</a>
 </div>
 
 @section Scripts {

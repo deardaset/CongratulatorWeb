@@ -33,12 +33,12 @@
                         }
                         else
                         {
-                            <span>Нет фото</span>
+                            <span>No photo</span>
                         }
                     </td>
                     <td>
-                        <a asp-controller="Person" asp-action="Edit" asp-route-id="@person.Id">Edit</a> |
-                        <a asp-controller="Person" asp-action="Delete" asp-route-id="@person.Id">Delete</a>
+                        <a asp-controller="Person" asp-action="Edit" asp-route-id="@person.Id" class="btn btn-light">Edit</a> |
+                        <a asp-controller="Person" asp-action="Delete" asp-route-id="@person.Id" class="btn btn-light">Delete</a>
                     </td>
                 </tr>
             }
@@ -50,4 +50,4 @@ else
     <p>There is no upcoming birthdays.</p>
 }
 
-<p><a asp-controller="Person" asp-action="Index">All birthdays</a></p>
+<p><a asp-controller="Person" asp-action="Index" class="btn btn-primary">All birthdays</a></p>

@@ -7,20 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CongratulatorWeb.Controllers
 {
-    public class PersonController : Controller
+    public class PersonController (AppDbContext context, IWebHostEnvironment webhost) : Controller
     {
-        private readonly AppDbContext _appDbContext;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        public PersonController(AppDbContext appDbContext, IWebHostEnvironment webHostEnvironment)
-        {
-            _appDbContext = appDbContext;
-            _webHostEnvironment = webHostEnvironment;
-        }
-
         // GET: Person
         public IActionResult Index()
         {
-            var birthdays = _appDbContext.People.OrderBy(p => p.Name).ToList();
+            var birthdays = context.People.OrderBy(p => p.Name).ToList();
             return View(birthdays);
         }
 
@@ -43,8 +35,8 @@ namespace CongratulatorWeb.Controllers
                     BirthDate = request.BirthDate,
                     Relationship = request.Relationship
                 };
-                _appDbContext.Add(person);
-                await _appDbContext.SaveChangesAsync();
+                context.Add(person);
+                await context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(request);
@@ -57,7 +49,7 @@ namespace CongratulatorWeb.Controllers
             {
                 return NotFound();
             }
-            var person = await _appDbContext.People.FindAsync(id);
+            var person = await context.People.FindAsync(id);
             if (person == null)
             {
                 return NotFound();
@@ -76,7 +68,7 @@ namespace CongratulatorWeb.Controllers
             {
                 try
                 {
-                    var person = await _appDbContext.People.FindAsync(id);
+                    var person = await context.People.FindAsync(id);
                     if (person == null)
                     {
                         return NotFound();
@@ -85,7 +77,7 @@ namespace CongratulatorWeb.Controllers
                     person.BirthDate = request.BirthDate;
                     person.Relationship = request.Relationship;
                                         
-                    await _appDbContext.SaveChangesAsync();
+                    await context.SaveChangesAsync();
                 }
                 catch
                 {
@@ -111,7 +103,7 @@ namespace CongratulatorWeb.Controllers
                 return NotFound();
             }
 
-            var person = await _appDbContext.People
+            var person = await context.People
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (person == null)
             {
@@ -126,20 +118,20 @@ namespace CongratulatorWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var person = await _appDbContext.People.FindAsync(id);
+            var person = await context.People.FindAsync(id);
             if (person != null)
             {
                 if (!string.IsNullOrEmpty(person.PhotoPath))
                 {
-                    var path = Path.Combine(_webHostEnvironment.WebRootPath, person.PhotoPath.TrimStart('/'));
+                    var path = Path.Combine(webhost.WebRootPath, person.PhotoPath.TrimStart('/'));
                     if (System.IO.File.Exists(path))
                     {
                         System.IO.File.Delete(path);
                     }
                 }
 
-                _appDbContext.People.Remove(person);
-                await _appDbContext.SaveChangesAsync();
+                context.People.Remove(person);
+                await context.SaveChangesAsync();
             }
 
             return RedirectToAction(nameof(Index));
@@ -167,11 +159,11 @@ namespace CongratulatorWeb.Controllers
                     await model.Photo.CopyToAsync(stream);
                 }
 
-                var person = await _appDbContext.People.FindAsync(model.PersonId);
+                var person = await context.People.FindAsync(model.PersonId);
                 if (person != null)
                 {
                     person.PhotoPath = $"/images/{fileName}";
-                    await _appDbContext.SaveChangesAsync();
+                    await context.SaveChangesAsync();
                 }
 
                 return RedirectToAction(nameof(Edit), new { id = model.PersonId });
@@ -184,7 +176,7 @@ namespace CongratulatorWeb.Controllers
         // Other method
         private bool BirthdayPersonExists(int id)
         {
-            return _appDbContext.People.Any(e => e.Id == id);
+            return context.People.Any(e => e.Id == id);
         }
     }
 }

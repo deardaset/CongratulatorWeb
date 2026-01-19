@@ -6,7 +6,7 @@
 <h1>All birthdays</h1>
 
 <p>
-    <a asp-action="Create">Create new person</a>
+    <a asp-action="Create" class="btn btn-primary">Create new person</a>
 </p>
 
 <table class="table">
@@ -33,11 +33,15 @@
                     {
                         <img src="@item.PhotoPath" alt="@item.Name" width="50" />
                     }
+                    else
+                    {
+                        <span>No photo</span>
+                    }
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="UploadPhoto" asp-route-id="@item.Id">Load photo</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-light">Edit</a> |
+                    <a asp-action="UploadPhoto" asp-route-id="@item.Id" class="btn btn-light">Load photo</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-light">Delete</a>
                 </td>
             </tr>
         }

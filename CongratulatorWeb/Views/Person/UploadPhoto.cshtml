@@ -11,12 +11,16 @@
         <form asp-action="UploadPhoto" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="PersonId" />
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label asp-for="Photo" class="control-label"></label>
-                <input asp-for="Photo" type="file" class="form-control" />
+                <input asp-for="Photo" type="file" class="form-control" id="photoInput" />
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
+                <label asp-for="Photo" class="control-label"></label>
+                <img id="photoPreview" src="" alt="Preview" style="max-width: 200px; max-height: 200px; display: none; border: 1px solid #ccc;" />
+            </div>
+            <div class="form-group mb-2">
                 <input type="submit" value="Load" class="btn btn-primary" />
             </div>
         </form>
@@ -24,11 +28,29 @@
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.PersonId">Back to editing</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to list</a> |
+    <a asp-action="Edit" asp-route-id="@Model.PersonId" class="btn btn-outline-secondary">Back to editing</a>
 </div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        document.getElementById('photoInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('photoPreview');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    </script>
 }
