@@ -5,22 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CongratulatorWeb.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(ILogger<HomeController> logger, AppDbContext context) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext _appDbContext;
-        public HomeController(ILogger<HomeController> logger, AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             var today = DateTime.Today;
-            var allPeople = _appDbContext.People.ToList();
+            var allPeople = context.People.ToList();
             var upcomingBirthdays = allPeople
-                .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(60))
+                .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(30))
                 .OrderBy(p => p.NextBirthday)
                 .ToList();
 

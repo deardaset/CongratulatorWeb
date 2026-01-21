@@ -50,12 +50,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVyc29uXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/kuvel/source/repos/CongratulatorWeb/CongratulatorWeb/Views/Person/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVyc29uXEluZGV4LmNzaHRtbA==
+[C:/Users/kuvel/source/repos/CongratulatorWeb/CongratulatorWeb/Views/Person/EditPhoto.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVyc29uXEVkaXRQaG90by5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/kuvel/source/repos/CongratulatorWeb/CongratulatorWeb/Views/Person/UploadPhoto.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVyc29uXFVwbG9hZFBob3RvLmNzaHRtbA==
+[C:/Users/kuvel/source/repos/CongratulatorWeb/CongratulatorWeb/Views/Person/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVyc29uXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/kuvel/source/repos/CongratulatorWeb/CongratulatorWeb/Views/Shared/Error.cshtml]

@@ -1,4 +1,5 @@
-﻿using CongratulatorWeb.Entities;
+﻿using CongratulatorWeb.Data.Mappings;
+using CongratulatorWeb.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -13,19 +14,21 @@ namespace CongratulatorWeb.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Person>(entity =>
-            {
-                entity.Property(e => e.Name)
-                .IsRequired();                      
+            //modelBuilder.Entity<Person>(entity =>
+            //{
+            //    entity.Property(e => e.Name)
+            //    .IsRequired();
 
-                entity.Property(e => e.BirthDate)
-                .HasColumnType("date");
+            //    entity.Property(e => e.BirthDate)
+            //    .HasColumnType("date");
 
-                entity.Property(e => e.PhotoPath)
-                .HasConversion<string>();
-            });
+            //    entity.Property(e => e.PhotoPath)
+            //    .HasConversion<string>();
+            //});
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfiguration(new PersonMap());
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

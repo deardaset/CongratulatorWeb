@@ -1,19 +1,23 @@
 ﻿using CongratulatorWeb.Data;
 using CongratulatorWeb.Entities;
+using CongratulatorWeb.Exceptions;
+using CongratulatorWeb.Interfaces;
 using CongratulatorWeb.Models;
 using CongratulatorWeb.Models.Requests;
+using CongratulatorWeb.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CongratulatorWeb.Controllers
 {
-    public class PersonController (AppDbContext context, IWebHostEnvironment webhost) : Controller
+    public class PersonController (IPersonRepository repository, IWebHostEnvironment webhost) : Controller
     {
         // GET: Person
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var birthdays = context.People.OrderBy(p => p.Name).ToList();
-            return View(birthdays);
+            var people = await repository.GetAllPeople();
+            return View(people);
         }
 
         // GET: Person/Create
@@ -35,25 +39,16 @@ namespace CongratulatorWeb.Controllers
                     BirthDate = request.BirthDate,
                     Relationship = request.Relationship
                 };
-                context.Add(person);
-                await context.SaveChangesAsync();
+                await repository.CreatePersonAsync(person);
                 return RedirectToAction(nameof(Index));
             }
             return View(request);
         }
-
+        
         // GET: Person/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var person = await context.People.FindAsync(id);
-            if (person == null)
-            {
-                return NotFound();
-            }
+            var person = await repository.GetPersonByIdAsync(id);
             return View(person);
         }
 
@@ -63,53 +58,19 @@ namespace CongratulatorWeb.Controllers
         public async Task<IActionResult> Edit(int id, EditPersonRequest request)
         {
             if (id != request.Id)
-                return NotFound();
+                throw new PersonNotFoundException("Person not found");
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var person = await context.People.FindAsync(id);
-                    if (person == null)
-                    {
-                        return NotFound();
-                    }
-                    person.Name = request.Name;
-                    person.BirthDate = request.BirthDate;
-                    person.Relationship = request.Relationship;
-                                        
-                    await context.SaveChangesAsync();
-                }
-                catch
-                {
-                    if (!BirthdayPersonExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await repository.EditPersonAsync(id, request);
                 return RedirectToAction(nameof(Index));
             }
             return View(request);
         }
 
         // GET: Person/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var person = await context.People
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (person == null)
-            {
-                return NotFound();
-            }
-
+            var person = await repository.GetPersonByIdAsync(id);            
             return View(person);
         }
 
@@ -118,7 +79,7 @@ namespace CongratulatorWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var person = await context.People.FindAsync(id);
+            var person = await repository.GetPersonByIdAsync(id);
             if (person != null)
             {
                 if (!string.IsNullOrEmpty(person.PhotoPath))
@@ -129,54 +90,49 @@ namespace CongratulatorWeb.Controllers
                         System.IO.File.Delete(path);
                     }
                 }
-
-                context.People.Remove(person);
-                await context.SaveChangesAsync();
+                await repository.DeletePersonAsync(person);                
             }
-
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Birthday/UploadPhoto/5
-        public IActionResult UploadPhoto(int id)
+        public async Task<IActionResult> EditPhoto(int id)
         {
-            var model = new UploadPhotoViewModel { PersonId = id };
+            var person = await repository.GetPersonByIdAsync(id);
+            if (person == null)
+            {
+                throw new PersonNotFoundException("Person not found");
+            }
+            var model = new EditPhotoViewModel
+            {
+                PersonId = person.Id,
+                Name = person.Name,
+                CurrentPhotoPath = person.PhotoPath
+            };
+
             return View(model);
         }
 
         // POST: Birthday/UploadPhoto
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadPhoto(UploadPhotoViewModel model)
+        public async Task<IActionResult> EditPhoto(EditPhotoViewModel model)
         {
             if (model.Photo != null && model.Photo.Length > 0)
             {
-                var fileName = $"{model.PersonId}_{DateTime.Now:yyyyMMddHHmmss}{Path.GetExtension(model.Photo.FileName)}";
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+                await repository.UploadPhotoAsync(model);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await model.Photo.CopyToAsync(stream);
-                }
-
-                var person = await context.People.FindAsync(model.PersonId);
-                if (person != null)
-                {
-                    person.PhotoPath = $"/images/{fileName}";
-                    await context.SaveChangesAsync();
-                }
-
-                return RedirectToAction(nameof(Edit), new { id = model.PersonId });
+                return RedirectToAction(nameof(Index));
             }
 
             ModelState.AddModelError("", "Файл не выбран или пустой.");
             return View(model);
         }
 
-        // Other method
-        private bool BirthdayPersonExists(int id)
+        public async Task<IActionResult> DeletePhoto(int id)
         {
-            return context.People.Any(e => e.Id == id);
+            await repository.DeletePhotoAsync(id);
+            return RedirectToAction(nameof(EditPhoto), new {id});
         }
     }
 }
