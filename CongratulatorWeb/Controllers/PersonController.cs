@@ -7,6 +7,7 @@ using CongratulatorWeb.Models.Requests;
 using CongratulatorWeb.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace CongratulatorWeb.Controllers
@@ -14,9 +15,10 @@ namespace CongratulatorWeb.Controllers
     public class PersonController (IPersonRepository repository, IWebHostEnvironment webhost) : Controller
     {
         // GET: Person
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? sortBy)
         {
-            var people = await repository.GetAllPeople();
+            var people = await repository.GetAllPeopleAsync(sortBy);
+            ViewBag.SortBy = sortBy;
             return View(people);
         }
 

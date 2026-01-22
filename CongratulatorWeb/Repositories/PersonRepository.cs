@@ -6,6 +6,7 @@ using CongratulatorWeb.Models;
 using CongratulatorWeb.Models.Requests;
 using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace CongratulatorWeb.Repositories
 {
@@ -16,10 +17,47 @@ namespace CongratulatorWeb.Repositories
             context.People.Add(person);
             await context.SaveChangesAsync();
         }
-        public async Task<List<Person>> GetAllPeople()
+        public async Task<List<Person>> UpcomingBirthdaysAsync(DateTime today, string? sortBy = null)
+        {
+            const int ADD_DAYS = 30;
+
+            var people = await context.People.ToListAsync();
+
+            var sorted = sortBy?.ToLower() switch
+            {
+                "name" => people
+                    .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(ADD_DAYS))
+                    .OrderBy(p => p.Name),
+                "year" => people
+                    .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(ADD_DAYS))
+                    .OrderBy(p => p.BirthDate.Year),
+                "birthdate" => people
+                    .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(ADD_DAYS))
+                    .OrderBy(p => p.NextBirthday),
+                "relationship" => people
+                    .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(ADD_DAYS))
+                    .OrderBy(p => p.Relationship),
+                _ => people
+                    .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(ADD_DAYS))
+                    .OrderBy(p => p.NextBirthday)
+            };
+
+            return sorted.ToList();
+        }
+        public async Task<List<Person>> GetAllPeopleAsync(string? sortBy = null)
         {
             var people = await context.People.ToListAsync();
-            return people.OrderBy(p => p.Name).ToList();            
+
+            var sorted = sortBy?.ToLower() switch
+            {
+                "name" => people.OrderBy(p => p.Name),
+                "year" => people.OrderBy(p => p.BirthDate.Year),
+                "birthdate" => people.OrderBy(p => p.NextBirthday),
+                "relationship" => people.OrderBy(p => p.Relationship),
+                _ => people.OrderBy(p => p.Name)
+            };
+
+            return sorted.ToList();
         }
         public async Task<Person> GetPersonByIdAsync(int id)
         {

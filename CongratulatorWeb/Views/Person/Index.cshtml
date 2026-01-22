@@ -1,13 +1,23 @@
 ﻿@model List<CongratulatorWeb.Entities.Person>
 @{
     ViewData["Title"] = "All birthdays";
+    var currentSort = ViewBag.SortBy as string ?? "name";
 }
 
 <h1>All birthdays</h1>
 
-<p>
+<div class="form-group mb-2 d-flex gap-2">
     <a asp-action="Create" class="btn btn-primary">Create new person</a>
-</p>
+    <form asp-action="Index" method="get" class="d-inline">
+        <label for="sortBy" class="form-label d-inline me-2">Sort by:</label>
+        <select name="sortBy" id="sortBy" class="form-select d-inline" style="width: auto;" onchange="this.form.submit()">
+            <option value="name" selected="@(currentSort == "name")">Name</option>
+            <option value="year" selected="@(currentSort == "year")">Year</option>
+            <option value="birthdate" selected="@(currentSort == "birthdate")">Birthdate</option>
+            <option value="relationship" selected="@(currentSort == "relationship")">Relationship</option>
+        </select>
+    </form>
+</div>
 
 <table class="table">
     <thead>

@@ -1,21 +1,19 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using CongratulatorWeb.Data;
+using CongratulatorWeb.Interfaces;
 using CongratulatorWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CongratulatorWeb.Controllers
 {
-    public class HomeController(ILogger<HomeController> logger, AppDbContext context) : Controller
+    public class HomeController(ILogger<HomeController> logger, IPersonRepository repository) : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? sortBy)
         {
             var today = DateTime.Today;
-            var allPeople = context.People.ToList();
-            var upcomingBirthdays = allPeople
-                .Where(p => p.NextBirthday >= today && p.NextBirthday <= today.AddDays(30))
-                .OrderBy(p => p.NextBirthday)
-                .ToList();
-
+            var upcomingBirthdays = await repository.UpcomingBirthdaysAsync(today, sortBy);
+            ViewBag.SortBy = sortBy;
             ViewBag.Today = today;
 
             return View(upcomingBirthdays);
